@@ -5,7 +5,6 @@
 # !wget https://raw.githubusercontent.com/southern-cross-ai/Data/main/eng_-french.csv
 
 ## Imports
-
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 from typing import Iterable, List
@@ -26,7 +25,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 ## Ensure reproducibility
-
 # Set seed.
 seed = 42
 np.random.seed(seed)
@@ -36,7 +34,6 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 
 ## Source and target languages & Dictionaries to hold tokenization
-
 SRC_LANGUAGE = 'en'
 TGT_LANGUAGE = 'fr'
 
@@ -48,7 +45,6 @@ token_transform[TGT_LANGUAGE] = get_tokenizer('spacy', language='fr_core_news_sm
 token_transform
 
 ## Read CSV
-
 csv = pd.read_csv(
     'eng_-french.csv', 
     usecols=['English words/sentences', 'French words/sentences']
@@ -56,7 +52,6 @@ csv = pd.read_csv(
 csv.head()
 
 ## Split CSV
-
 train_csv, test_csv = train_test_split(csv, test_size=0.1)
 
 ## Dataset Class
