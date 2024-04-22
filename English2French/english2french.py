@@ -7,39 +7,24 @@
 # !wget https://raw.githubusercontent.com/southern-cross-ai/Data/main/eng_french.csv
 
 
-# Standard libraries
-import os
-import math
-import timeit
-from typing import Iterable, List
-
-# Data manipulation and linear algebra
-import numpy as np
-import pandas as pd
-
-# Visualization
-import matplotlib.pyplot as plt
-
-# Machine Learning and Data Processing
-from sklearn.model_selection import train_test_split
-from tqdm.auto import tqdm
-
-# PyTorch basic and neural network modules
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-# PyTorch data utilities
-from torch.utils.data import DataLoader, Dataset
-from torch.nn.utils.rnn import pad_sequence
-
-# PyTorch transformer model
-from torch.nn import Transformer
-
-# Torchtext utilities for text processing
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
-
+from typing import Iterable, List
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader, Dataset
+from timeit import default_timer as timer
+from torch.nn import Transformer
+from torch import Tensor
+from sklearn.model_selection import train_test_split
+from tqdm.auto import tqdm
+import torch.nn as nn
+import torch
+import torch.nn.functional as F
+import numpy as np
+import math
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
 
 SRC_LANGUAGE = 'en'
 TGT_LANGUAGE = 'fr'
@@ -50,7 +35,7 @@ token_transform[SRC_LANGUAGE] = get_tokenizer('spacy', language='en_core_web_sm'
 token_transform[TGT_LANGUAGE] = get_tokenizer('spacy', language='fr_core_news_sm')
 
 csv = pd.read_csv(
-    'eng_french.csv', 
+    'eng_-french.csv', 
     usecols=['English words/sentences', 'French words/sentences']
 )
 
@@ -252,9 +237,9 @@ def train_epoch(model, optimizer):
         # print(" ".join(vocab_transform[TGT_LANGUAGE].lookup_tokens(list(tgt[0].cpu().numpy()))).replace("<bos>", "").replace("<eos>", ""))
         src = src.to(DEVICE)
         tgt = tgt.to(DEVICE)
-                
+
         tgt_input = tgt[:, :-1]
-        
+
         src_mask, tgt_mask, src_padding_mask, tgt_padding_mask = create_mask(src, tgt_input)
         logits = model(
             src, 
@@ -282,11 +267,11 @@ def evaluate(model):
         # print(" ".join(vocab_transform[TGT_LANGUAGE].lookup_tokens(list(tgt[0].cpu().numpy()))).replace("<bos>", "").replace("<eos>", ""))
         src = src.to(DEVICE)
         tgt = tgt.to(DEVICE)
-        
+
         tgt_input = tgt[:, :-1]
-        
+
         src_mask, tgt_mask, src_padding_mask, tgt_padding_mask = create_mask(src, tgt_input)
-        
+
         logits = model(
             src, 
             tgt_input, 
