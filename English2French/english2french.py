@@ -1,47 +1,26 @@
-# Install Notes
-# !pip install -U portalocker
-# !python -m spacy download en_core_web_sm
-# !python -m spacy download fr_core_news_sm
+import os
+import math
+import torch
+import numpy as np
+import pandas as pd
+from tqdm.auto import tqdm
 
-# Get the Data
-# !wget https://raw.githubusercontent.com/southern-cross-ai/Data/main/eng_french.csv
-
-
+import torch.nn as nn
+from torch import Tensor
+import torch.nn.functional as F
+from torch.nn import Transformer
 from torchtext.data.utils import get_tokenizer
-from torchtext.vocab import build_vocab_from_iterator
-from typing import Iterable, List
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
+from torchtext.vocab import build_vocab_from_iterator
+
+from typing import Iterable, List
 from timeit import default_timer as timer
-from torch.nn import Transformer
-from torch import Tensor
+
 from sklearn.model_selection import train_test_split
-from tqdm.auto import tqdm
-import torch.nn as nn
-import torch
-import torch.nn.functional as F
-import numpy as np
-import math
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
 
-SRC_LANGUAGE = 'en'
-TGT_LANGUAGE = 'fr'
+# Funtions #################################################################################
 
-token_transform = {}
-vocab_transform = {}
-token_transform[SRC_LANGUAGE] = get_tokenizer('spacy', language='en_core_web_sm')
-token_transform[TGT_LANGUAGE] = get_tokenizer('spacy', language='fr_core_news_sm')
-
-csv = pd.read_csv(
-    'eng_-french.csv', 
-    usecols=['English words/sentences', 'French words/sentences']
-)
-
-train_csv, test_csv = train_test_split(csv, test_size=0.1)
-
-# Custom Dataset class.
 class TranslationDataset(Dataset):
     def __init__(self, csv):
         self.csv = csv
@@ -55,49 +34,24 @@ class TranslationDataset(Dataset):
             self.csv['French words/sentences'].iloc[idx]
         )
 
-train_dataset = TranslationDataset(train_csv)
-valid_dataset = TranslationDataset(test_csv)
-
 def yield_tokens(data_iter: Iterable, language: str) -> List[str]:
     language_index = {SRC_LANGUAGE: 0, TGT_LANGUAGE: 1}
     for data_sample in data_iter:
         yield token_transform[language](data_sample[language_index[language]])
-# Define special symbols and indices.
-UNK_IDX, PAD_IDX, BOS_IDX, EOS_IDX = 0, 1, 2, 3
-# Make sure the tokens are in order of their indices to properly insert them in vocab.
-special_symbols = ['<unk>', '<pad>', '<bos>', '<eos>']
-for ln in [SRC_LANGUAGE, TGT_LANGUAGE]:
-    # Create torchtext's Vocab object.
-    vocab_transform[ln] = build_vocab_from_iterator(
-        yield_tokens(train_dataset, ln),
-        min_freq=1,
-        specials=special_symbols,
-        special_first=True,
-    )
-# Set ``UNK_IDX`` as the default index. This index is returned when the token is not found.
-# If not set, it throws ``RuntimeError`` when the queried token is not found in the Vocabulary.
-for ln in [SRC_LANGUAGE, TGT_LANGUAGE]:
-    vocab_transform[ln].set_default_index(UNK_IDX)
 
-# helper function to club together sequential operations
 def sequential_transforms(*transforms):
     def func(txt_input):
         for transform in transforms:
             txt_input = transform(txt_input)
         return txt_input
     return func
+
 # function to add BOS/EOS and create tensor for input sequence indices
 def tensor_transform(token_ids: List[int]):
     return torch.cat((torch.tensor([BOS_IDX]),
                       torch.tensor(token_ids),
                       torch.tensor([EOS_IDX])))
-# `src` and `tgt` language text transforms to convert raw strings into tensors indices
-text_transform = {}
-for ln in [SRC_LANGUAGE, TGT_LANGUAGE]:
-    text_transform[ln] = sequential_transforms(token_transform[ln], # Tokenization
-                                               vocab_transform[ln], # Numericalization
-                                               tensor_transform) # Add BOS/EOS and create tensor
-# function to collate data samples into batch tensors
+
 def collate_fn(batch):
     src_batch, tgt_batch = [], []
     for src_sample, tgt_sample in batch:
@@ -107,21 +61,11 @@ def collate_fn(batch):
     tgt_batch = pad_sequence(tgt_batch, padding_value=PAD_IDX, batch_first=True)
     return src_batch, tgt_batch
 
-SRC_VOCAB_SIZE = len(vocab_transform[SRC_LANGUAGE])
-TGT_VOCAB_SIZE = len(vocab_transform[TGT_LANGUAGE])
-EMB_SIZE = 192
-NHEAD = 6
-FFN_HID_DIM = 192
-BATCH_SIZE = 192
-NUM_ENCODER_LAYERS = 3
-NUM_DECODER_LAYERS = 3
-DEVICE = 'cuda'
-NUM_EPOCHS = 2
-
 def generate_square_subsequent_mask(sz):
     mask = (torch.triu(torch.ones((sz, sz), device=DEVICE)) == 1).transpose(0, 1)
     mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
     return mask
+
 def create_mask(src, tgt):
     src_seq_len = src.shape[1]
     tgt_seq_len = tgt.shape[1]
@@ -148,13 +92,6 @@ class PositionalEncoding(nn.Module):
         pe = pe.unsqueeze(0)
         self.register_buffer('pe', pe)
     def forward(self, x):
-        """
-        Inputs of forward function
-        :param x: the sequence fed to the positional encoder model (required).
-        Shape:
-            x: [sequence length, batch size, embed dim]
-            output: [sequence length, batch size, embed dim]
-        """
         x = x + self.pe[:, :x.size(1)]
         return self.dropout(x)
 
@@ -166,7 +103,7 @@ class TokenEmbedding(nn.Module):
     def forward(self, tokens: Tensor):
         return self.embedding(tokens.long()) * math.sqrt(self.emb_size)
 
-class Seq2SeqTransformer(nn.Module):
+class English2French(nn.Module):
     def __init__(
         self,
         num_encoder_layers: int,
@@ -178,7 +115,7 @@ class Seq2SeqTransformer(nn.Module):
         dim_feedforward: int = 512,
         dropout: float = 0.1
     ):
-        super(Seq2SeqTransformer, self).__init__()
+        super(English2French, self).__init__()
         self.transformer = Transformer(
             d_model=emb_size,
             nhead=nhead,
@@ -213,21 +150,7 @@ class Seq2SeqTransformer(nn.Module):
         return self.transformer.decoder(self.positional_encoding(
                           self.tgt_tok_emb(tgt)), memory,
                           tgt_mask)
-
-model = Seq2SeqTransformer(
-    NUM_ENCODER_LAYERS, 
-    NUM_DECODER_LAYERS, 
-    EMB_SIZE,
-    NHEAD, 
-    SRC_VOCAB_SIZE, 
-    TGT_VOCAB_SIZE, 
-    FFN_HID_DIM
-).to(DEVICE)
-
-loss_fn = torch.nn.CrossEntropyLoss(ignore_index=PAD_IDX)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.98), eps=1e-9)
-
-train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn)
+        
 def train_epoch(model, optimizer):
     print('Training')
     model.train()
@@ -257,7 +180,7 @@ def train_epoch(model, optimizer):
         optimizer.step()
         losses += loss.item()
     return losses / len(list(train_dataloader))
-val_dataloader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn)
+
 def evaluate(model):
     print('Validating')
     model.eval()
@@ -286,7 +209,88 @@ def evaluate(model):
         losses += loss.item()
     return losses / len(list(val_dataloader))
 
+
+###################################################################################################################################################################
+
+# Constants
+SRC_LANGUAGE = 'en'
+TGT_LANGUAGE = 'fr'
+EMB_SIZE = 192
+NHEAD = 6
+FFN_HID_DIM = 192
+BATCH_SIZE = 192
+NUM_ENCODER_LAYERS = 3
+NUM_DECODER_LAYERS = 3
+DEVICE = 'cuda'
+NUM_EPOCHS = 2
+
+
+# Load Data
+csv = pd.read_csv(
+    'eng_french.csv', 
+    usecols=['English words/sentences', 'French words/sentences']
+)
+train_csv, test_csv = train_test_split(csv, test_size=0.1)
+train_dataset = TranslationDataset(train_csv)
+valid_dataset = TranslationDataset(test_csv)
+train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn)
+val_dataloader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn)
+
+
+
+# Define special symbols and indices.
+UNK_IDX, PAD_IDX, BOS_IDX, EOS_IDX = 0, 1, 2, 3
+special_symbols = ['<unk>', '<pad>', '<bos>', '<eos>']
+
+# Tokenizer
+token_transform = {}
+vocab_transform = {}
+token_transform[SRC_LANGUAGE] = get_tokenizer('spacy', language='en_core_web_sm')
+token_transform[TGT_LANGUAGE] = get_tokenizer('spacy', language='fr_core_news_sm')
+
+
+for ln in [SRC_LANGUAGE, TGT_LANGUAGE]:
+    # Create torchtext's Vocab object.
+    vocab_transform[ln] = build_vocab_from_iterator(
+        yield_tokens(train_dataset, ln),
+        min_freq=1,
+        specials=special_symbols,
+        special_first=True,
+    )
+
+# If not set, it throws ``RuntimeError`` when the queried token is not found in the Vocabulary.
+for ln in [SRC_LANGUAGE, TGT_LANGUAGE]:
+    vocab_transform[ln].set_default_index(UNK_IDX)
+
+# helper function to club together sequential operations
+
+# `src` and `tgt` language text transforms to convert raw strings into tensors indices
+text_transform = {}
+for ln in [SRC_LANGUAGE, TGT_LANGUAGE]:
+    text_transform[ln] = sequential_transforms(token_transform[ln], # Tokenization
+                                               vocab_transform[ln], # Numericalization
+                                               tensor_transform) # Add BOS/EOS and create tensor
+
+SRC_VOCAB_SIZE = len(vocab_transform[SRC_LANGUAGE])
+TGT_VOCAB_SIZE = len(vocab_transform[TGT_LANGUAGE])
+
+# Instantiate Model
+model = English2French(
+    NUM_ENCODER_LAYERS, 
+    NUM_DECODER_LAYERS, 
+    EMB_SIZE,
+    NHEAD, 
+    SRC_VOCAB_SIZE, 
+    TGT_VOCAB_SIZE, 
+    FFN_HID_DIM
+).to(DEVICE)
+
+# Loss and Optimizer
+loss_fn = torch.nn.CrossEntropyLoss(ignore_index=PAD_IDX)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.98), eps=1e-9)
+
 train_loss_list, valid_loss_list = [], []
+
 for epoch in range(1, NUM_EPOCHS+1):
     start_time = timer()
     train_loss = train_epoch(model, optimizer)
