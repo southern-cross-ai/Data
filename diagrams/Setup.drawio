@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-23T06:42:00.821Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="van3DmHxhsXS8Iej5tsO" version="24.2.8" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-23T07:49:04.587Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="H36EDv2XS1qtX9wQ8oSR" version="24.2.8" type="github">
   <diagram name="Page-1" id="cgFGnpT8RXrNZF5JN4Lv">
     <mxGraphModel dx="475" dy="820" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
@@ -23,18 +23,32 @@
           <mxGeometry x="393" y="216" width="120" height="61" as="geometry" />
         </mxCell>
         <mxCell id="76yENtynF5-FoFlrvveT-24" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="195" y="230" width="120" height="396" as="geometry" />
+          <mxGeometry x="199" y="215" width="120" height="396" as="geometry" />
         </mxCell>
-        <mxCell id="76yENtynF5-FoFlrvveT-15" value="Batching" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
+        <mxCell id="76yENtynF5-FoFlrvveT-15" value="DataLoader" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
           <mxGeometry y="336" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="76yENtynF5-FoFlrvveT-16" value="Padding" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
-          <mxGeometry y="252" width="120" height="60" as="geometry" />
+        <mxCell id="76yENtynF5-FoFlrvveT-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#182E3E;fontColor=#1A1A1A;" edge="1" parent="76yENtynF5-FoFlrvveT-24" source="76yENtynF5-FoFlrvveT-16" target="76yENtynF5-FoFlrvveT-15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-20" y="195" />
+              <mxPoint x="-20" y="366" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="76yENtynF5-FoFlrvveT-16" value="Dataset (class)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
+          <mxGeometry y="165" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="76yENtynF5-FoFlrvveT-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#182E3E;fontColor=#1A1A1A;" edge="1" parent="76yENtynF5-FoFlrvveT-24" source="76yENtynF5-FoFlrvveT-17" target="76yENtynF5-FoFlrvveT-16">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="76yENtynF5-FoFlrvveT-17" value="Tokenization" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
-          <mxGeometry y="168" width="120" height="60" as="geometry" />
+          <mxGeometry y="251" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="76yENtynF5-FoFlrvveT-18" value="Data Cleaning" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
+        <mxCell id="76yENtynF5-FoFlrvveT-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#182E3E;fontColor=#1A1A1A;" edge="1" parent="76yENtynF5-FoFlrvveT-24" source="76yENtynF5-FoFlrvveT-18" target="76yENtynF5-FoFlrvveT-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="76yENtynF5-FoFlrvveT-18" value="DataFrame" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
           <mxGeometry y="84" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="76yENtynF5-FoFlrvveT-19" value="Data Acquisition" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#9673a6;fillColor=#e1d5e7;flipV=1;flipH=1;container=0;" vertex="1" parent="76yENtynF5-FoFlrvveT-24">
