@@ -4,9 +4,11 @@ from transformers import XLMRobertaTokenizer
 
 # Constants
 batch_size=2
+context_window=512
+
 
 class English2FrenchDataset(Dataset):
-    def __init__(self, csv_file, tokenizer, max_length=512):
+    def __init__(self, csv_file, tokenizer, context_window):
         # Read the CSV file directly within the class constructor
         self.dataframe = pd.read_csv(
             csv_file,
@@ -50,7 +52,7 @@ def main():
   # Tokenization
   tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base');
   # Data Preparation
-  dataset = English2FrenchDataset('eng_french.csv', tokenizer)
+  dataset = English2FrenchDataset('eng_french.csv', tokenizer, context_window)
   dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
   # Testing
   iterator = iter(dataset)
