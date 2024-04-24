@@ -24,7 +24,11 @@ tokenizer = T5Tokenizer.from_pretrained('google/mt5-small')
 from transformers import MarianTokenizer
 tokenizer = MarianTokenizer.from_pretrained('Helsinki-NLP/opus-mt-en-de')
 ```
-
+## Here is some Tokenizers overview
+1) **BERT Tokenizer**: The BERT tokenizer uses WordPiece tokenization, which is similar to BPE but with some differences in the algorithm. It's a good choice if you want a tokenizer that's widely used and well-tested.
+2) **WordPiece Tokenizer**: This tokenizer, originally introduced by Google, is similar to BPE but uses a different token merging strategy. It's simple and effective, making it a good choice for starting with custom tokenization.
+3) **SentencePiece**: SentencePiece is a more advanced tokenization library that supports various tokenization algorithms, including BPE and Unigram. It's highly configurable and provides more flexibility in designing custom tokenization schemes.
+4) **Hugging Face Tokenizers Library**: The Hugging Face Tokenizers library provides efficient implementations of various tokenization algorithms, including BPE and WordPiece. It's designed for scalability and performance, making it suitable for large-scale tokenization tasks.
 
 
 
