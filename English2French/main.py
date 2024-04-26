@@ -18,7 +18,7 @@ csv_colums=['English words/sentences', 'French words/sentences']
 
 class English2FrenchDataset(Dataset):
     def __init__(self, csv_file, tokenizer, context_window):
-        self.dataframe = pd.read_csv(csv_file, csv_colums)
+        self.dataframe = pd.read_csv(csv_file, usecols=csv_colums)
         self.tokenizer = tokenizer
         self.context_window = context_window
 
@@ -31,15 +31,15 @@ class English2FrenchDataset(Dataset):
 
         source_encoded = self.tokenizer.encode_plus(
             source,
-            context_window=self.context_window,
-            padding='context_window',
+            max_length = context_window,
+            padding='max_length',
             truncation=True,
             return_tensors='pt'
         )
         target_encoded = self.tokenizer.encode_plus(
             target,
-            context_window=self.context_window,
-            padding='context_window',
+            max_length = context_window,
+            padding='max_length',
             truncation=True,
             return_tensors='pt'
         )
