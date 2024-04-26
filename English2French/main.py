@@ -20,7 +20,6 @@ nhead = 8
 num_encoder_layers = 6
 num_decoder_layers = 6
 dim_feedforward = 2048
-max_seq_length = 100
 dropout = 0.1
 
 class English2FrenchDataset(Dataset):
@@ -89,13 +88,13 @@ class Model(nn.Module):
                  num_encoder_layers, 
                  num_decoder_layers, 
                  dim_feedforward, 
-                 max_seq_length, 
+                 context_window, 
                  dropout=0.1
                  ):
         super(Model, self).__init__()
         self.embedding_size = embedding_size
         self.embedding = nn.Embedding(vocab_size, embedding_size)
-        self.pos_encoder = PositionalEncoding(embedding_size, dropout, max_seq_length)
+        self.pos_encoder = PositionalEncoding(embedding_size, dropout, context_window)
         self.transformer = nn.Transformer(embedding_size, 
                                           nhead, 
                                           num_encoder_layers, 
