@@ -1,16 +1,24 @@
 import pandas as pd
-from torch.utils.data import Dataset, DataLoader
+import math
 from transformers import XLMRobertaTokenizer
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.nn import Transformer
+from torch.utils.data import Dataset, DataLoader
 
 # get the data !wget https://raw.githubusercontent.com/southern-cross-ai/TranslationAI/main/English2French/eng_french.csv
 
 # Constants
 batch_size=2
 context_window=512
+embedding_size = 500
+csv_colums=['English words/sentences', 'French words/sentences']
 
 class English2FrenchDataset(Dataset):
     def __init__(self, csv_file, tokenizer, context_window):
-        self.dataframe = pd.read_csv(csv_file, usecols=['English words/sentences', 'French words/sentences'])
+        self.dataframe = pd.read_csv(csv_file, csv_colums)
         self.tokenizer = tokenizer
         self.max_length = context_window
 
@@ -48,6 +56,24 @@ class English2FrenchDataset(Dataset):
             'target_input_ids': target_encoded['input_ids'].squeeze(),
             'target_mask': target_mask
         }
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, embedding_size, dropout=0.1, context_window=512):
+        super(PositionalEncoding, self).__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        position = torch.arange(context_window).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, embedding_size, 2) * -(math.log(10000.0) / embedding_size))
+        pe = torch.zeros(context_window, embedding_size)
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0).transpose(0, 1)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x):
+        x = x + self.pe[:x.size(0), :]
+        return self.dropout(x)
+
 
 def main():
   # Tokenization
