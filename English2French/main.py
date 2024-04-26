@@ -13,7 +13,7 @@ from torch.utils.data import Dataset, DataLoader
 # Constants
 batch_size=2
 context_window=512
-embedding_size = 500
+embedding_size = 512
 csv_colums=['English words/sentences', 'French words/sentences']
 
 nhead = 8
@@ -128,6 +128,46 @@ def main():
   # Data Preparation
   dataset = English2FrenchDataset('eng_french.csv', tokenizer, context_window)
   dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+  # Model
+  model = Model(vocab_size, embedding_size, nhead, num_encoder_layers, num_decoder_layers, dim_feedforward, context_window, dropout)
+  # Loss
+  loss_fn = nn.CrossEntropyLoss()
+  optimizer = optim.Adam(model.parameters(), lr=0.0001)
+
+  # Traning
+  def train(dataloader, model, loss_fn, optimizer):
+    model.train()
+    total_loss = 0
+    for src, tgt in dataloader:
+        src = src.to(device)
+        tgt = tgt.to(device)
+        
+        src_mask = (src != 0)
+        tgt_mask = (tgt != 0)
+        src_key_padding_mask = ~src_mask
+        tgt_key_padding_mask = ~tgt_mask
+
+        optimizer.zero_grad()
+        output = model(src, tgt, src_key_padding_mask, tgt_key_padding_mask)
+        output = output.reshape(-1, output.shape[-1])
+        tgt = tgt.reshape(-1)
+
+        loss = loss_fn(output, tgt)
+        loss.backward()
+        optimizer.step()
+        
+        total_loss += loss.item()
+
+    average_loss = total_loss / len(dataloader)
+    print(f"Average Loss: {average_loss}")
+
+# Assuming the use of a CUDA device if available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+
+# Example of running the training loop
+train(dataloader, model, loss_fn, optimizer)
+
   
   
   
