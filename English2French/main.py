@@ -16,6 +16,13 @@ context_window=512
 embedding_size = 500
 csv_colums=['English words/sentences', 'French words/sentences']
 
+nhead = 8
+num_encoder_layers = 6
+num_decoder_layers = 6
+dim_feedforward = 2048
+max_seq_length = 100
+dropout = 0.1
+
 class English2FrenchDataset(Dataset):
     def __init__(self, csv_file, tokenizer, context_window):
         self.dataframe = pd.read_csv(csv_file, usecols=csv_colums)
@@ -122,6 +129,11 @@ def main():
   # Data Preparation
   dataset = English2FrenchDataset('eng_french.csv', tokenizer, context_window)
   dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+  
+  
+  
+  
+  
   # Testing
   iterator = iter(dataset)
   print(next(iterator)['source_text'])
