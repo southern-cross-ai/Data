@@ -20,7 +20,7 @@ class English2FrenchDataset(Dataset):
     def __init__(self, csv_file, tokenizer, context_window):
         self.dataframe = pd.read_csv(csv_file, csv_colums)
         self.tokenizer = tokenizer
-        self.max_length = context_window
+        self.context_window = context_window
 
     def __len__(self):
         return len(self.dataframe)
@@ -31,15 +31,15 @@ class English2FrenchDataset(Dataset):
 
         source_encoded = self.tokenizer.encode_plus(
             source,
-            max_length=self.max_length,
-            padding='max_length',
+            context_window=self.context_window,
+            padding='context_window',
             truncation=True,
             return_tensors='pt'
         )
         target_encoded = self.tokenizer.encode_plus(
             target,
-            max_length=self.max_length,
-            padding='max_length',
+            context_window=self.context_window,
+            padding='context_window',
             truncation=True,
             return_tensors='pt'
         )
