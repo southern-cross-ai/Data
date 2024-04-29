@@ -173,12 +173,12 @@ def main():
         average_loss = total_loss / len(dataloader)
         print(f"Average Loss: {average_loss}")
 
-# Assuming the use of a CUDA device if available
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = model.to(device)
-
-# Example of running the training loop
-train(dataloader, model, loss_fn, optimizer)
+    # Assuming the use of a CUDA device if available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    
+    # Example of running the training loop
+    train(dataloader, model, loss_fn, optimizer)
 
   
 if __name__ == "__main__":
