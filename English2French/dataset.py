@@ -1,9 +1,11 @@
-import pandas as pd
 from torch.utils.data import Dataset
+import pandas as pd
 
-class English2FrenchDataset(Dataset):
-    def __init__(self, csv_file, tokenizer, context_window):
-        self.dataframe = pd.read_csv(csv_file, usecols=csv_columns)
+class TranslationDataset(Dataset):
+    def __init__(self, csv_file, source_column, target_column, tokenizer, context_window):
+        self.dataframe = pd.read_csv(csv_file, usecols=[source_column, target_column])
+        self.source_column = source_column
+        self.target_column = target_column
         self.tokenizer = tokenizer
         self.context_window = context_window
 
@@ -11,19 +13,19 @@ class English2FrenchDataset(Dataset):
         return len(self.dataframe)
     
     def __getitem__(self, idx):
-        source = self.dataframe.iloc[idx]['English words/sentences']
-        target = self.dataframe.iloc[idx]['French words/sentences']
+        source = self.dataframe.iloc[idx][self.source_column]
+        target = self.dataframe.iloc[idx][self.target_column]
 
         source_encoded = self.tokenizer.encode_plus(
             source,
-            max_length = context_window,
+            max_length=self.context_window,
             padding='max_length',
             truncation=True,
             return_tensors='pt'
         )
         target_encoded = self.tokenizer.encode_plus(
             target,
-            max_length = context_window,
+            max_length=self.context_window,
             padding='max_length',
             truncation=True,
             return_tensors='pt'
@@ -41,4 +43,3 @@ class English2FrenchDataset(Dataset):
             'target_input_ids': target_encoded['input_ids'].squeeze(),
             'target_mask': target_mask
         }
-
