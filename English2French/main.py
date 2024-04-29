@@ -8,8 +8,6 @@ import torch.optim as optim
 from torch.nn import Transformer
 from torch.utils.data import Dataset, DataLoader
 
-# get the data !wget https://raw.githubusercontent.com/southern-cross-ai/TranslationAI/main/English2French/eng_french.csv
-
 # Constants
 batch_size=128
 context_window=512
