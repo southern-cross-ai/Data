@@ -5,7 +5,6 @@ from transformers import XLMRobertaTokenizer
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.nn import Transformer
 from torch.utils.data import Dataset, DataLoader
 
 # Constants
