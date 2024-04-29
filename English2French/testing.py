@@ -14,6 +14,7 @@ def main():
     # Tokenization
     tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base')
     vocab_size = tokenizer.vocab_size
+    print (f'Tokenizer imported if vocab is 0 < {vocab_size}')
 
     # # Configuration instances
     # model_config = ModelConfig(vocab_size=vocab_size)
