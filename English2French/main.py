@@ -183,19 +183,5 @@ model = model.to(device)
 train(dataloader, model, loss_fn, optimizer)
 
   
-  
-  
-  
-  
-  # Testing
-  iterator = iter(dataset)
-  print(next(iterator)['source_text'])
-  print(next(iterator)['target_text'])
-  print(next(iterator)['source_input_ids'][0:10])
-  print(next(iterator)['target_input_ids'][0:10])
-  print(len(next(iterator)['source_input_ids']))
-  print(len(next(iterator)['target_input_ids']))
-  print(next(iterator)['target_mask'])
-
 if __name__ == "__main__":
     main()
