@@ -123,7 +123,7 @@ class Model(nn.Module):
 
 def main():
   # Tokenization
-  tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base');
+  tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base')
   vocab_size = tokenizer.vocab_size
   # Data Preparation
   dataset = English2FrenchDataset('eng_french.csv', tokenizer, context_window)
