@@ -134,29 +134,43 @@ def main():
   loss_fn = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
-  # Traning
-  def train(dataloader, model, loss_fn, optimizer):
+def train(dataloader, model, loss_fn, optimizer, device):
+    print('Training...')
     model.train()
     total_loss = 0
-    for src, tgt in dataloader:
-        src = src.to(device)
-        tgt = tgt.to(device)
-        
-        src_mask = (src != 0)
-        tgt_mask = (tgt != 0)
-        src_key_padding_mask = ~src_mask
-        tgt_key_padding_mask = ~tgt_mask
+
+    for batch in dataloader:
+        src = batch['source_input_ids'].to(device)
+        print(src)
+        tgt = batch['target_input_ids'].to(device)
+        src_mask = batch['source_mask'].to(device)
+        tgt_mask = batch['target_mask'].to(device)
+
+        # Transpose masks to match the expected shape [seq_length, batch_size]
+        # src = src.t()
+        # tgt = tgt.t()
+        src_mask = src_mask.t()
+        tgt_mask = tgt_mask.t()
+
+
+        # src_key_padding_mask = src_mask.t()
+        # tgt_key_padding_mask = tsrc_mask.t()
+        # src_key_padding_mask = src_mask.t()
+        # tgt_key_padding_mask = tgt_mask.t()
 
         optimizer.zero_grad()
-        output = model(src, tgt, src_key_padding_mask, tgt_key_padding_mask)
-        output = output.reshape(-1, output.shape[-1])
-        tgt = tgt.reshape(-1)
+        
+        output = model(src, tgt, src_key_padding_mask=src_mask, tgt_key_padding_mask=tgt_mask)
+        # print(output)
+        output = output.reshape(-1, output.shape[-1])  # Flatten output for loss calculation
+        tgt = tgt.reshape(-1)  # Flatten target for loss calculation
 
         loss = loss_fn(output, tgt)
         loss.backward()
         optimizer.step()
-        
+
         total_loss += loss.item()
+        print (total_loss)
 
     average_loss = total_loss / len(dataloader)
     print(f"Average Loss: {average_loss}")
