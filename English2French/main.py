@@ -11,7 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 # get the data !wget https://raw.githubusercontent.com/southern-cross-ai/TranslationAI/main/English2French/eng_french.csv
 
 # Constants
-batch_size=2
+batch_size=128
 context_window=512
 embedding_size = 512
 csv_colums=['English words/sentences', 'French words/sentences']
