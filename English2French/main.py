@@ -14,7 +14,7 @@ from torch.utils.data import Dataset, DataLoader
 batch_size=128
 context_window=512
 embedding_size = 512
-csv_colums=['English words/sentences', 'French words/sentences']
+csv_columns=['English words/sentences', 'French words/sentences']
 
 nhead = 8
 num_encoder_layers = 6
@@ -24,7 +24,7 @@ dropout = 0.1
 
 class English2FrenchDataset(Dataset):
     def __init__(self, csv_file, tokenizer, context_window):
-        self.dataframe = pd.read_csv(csv_file, usecols=csv_colums)
+        self.dataframe = pd.read_csv(csv_file, usecols=csv_columns)
         self.tokenizer = tokenizer
         self.context_window = context_window
 
