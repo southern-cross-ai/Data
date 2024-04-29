@@ -8,6 +8,7 @@ class ModelConfig:
     num_decoder_layers: int = 6
     dim_feedforward: int = 2048
     dropout: float = 0.1
+    vocab_size: int = None  # Initially set to None
 
 @dataclass
 class TrainingConfig:
