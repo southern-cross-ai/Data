@@ -144,17 +144,9 @@ def main():
             tgt_mask = batch['target_mask'].to(device)
     
             # Transpose masks to match the expected shape [seq_length, batch_size]
-            # src = src.t()
-            # tgt = tgt.t()
             src_mask = src_mask.t()
             tgt_mask = tgt_mask.t()
-    
-    
-            # src_key_padding_mask = src_mask.t()
-            # tgt_key_padding_mask = tsrc_mask.t()
-            # src_key_padding_mask = src_mask.t()
-            # tgt_key_padding_mask = tgt_mask.t()
-    
+
             optimizer.zero_grad()
             
             output = model(src, tgt, src_key_padding_mask=src_mask, tgt_key_padding_mask=tgt_mask)
