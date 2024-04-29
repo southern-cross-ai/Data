@@ -131,38 +131,38 @@ def main():
   loss_fn = nn.CrossEntropyLoss()
   optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
-    def train(dataloader, model, loss_fn, optimizer, device):
-        print('Training...')
-        model.train()
-        total_loss = 0
-    
-        for batch in dataloader:
-            src = batch['source_input_ids'].to(device)
-            print(src)
-            tgt = batch['target_input_ids'].to(device)
-            src_mask = batch['source_mask'].to(device)
-            tgt_mask = batch['target_mask'].to(device)
-    
-            # Transpose masks to match the expected shape [seq_length, batch_size]
-            src_mask = src_mask.t()
-            tgt_mask = tgt_mask.t()
+def train(dataloader, model, loss_fn, optimizer, device):
+    print('Training...')
+    model.train()
+    total_loss = 0
 
-            optimizer.zero_grad()
-            
-            output = model(src, tgt, src_key_padding_mask=src_mask, tgt_key_padding_mask=tgt_mask)
-            # print(output)
-            output = output.reshape(-1, output.shape[-1])  # Flatten output for loss calculation
-            tgt = tgt.reshape(-1)  # Flatten target for loss calculation
-    
-            loss = loss_fn(output, tgt)
-            loss.backward()
-            optimizer.step()
-    
-            total_loss += loss.item()
-            print (total_loss)
-    
-        average_loss = total_loss / len(dataloader)
-        print(f"Average Loss: {average_loss}")
+    for batch in dataloader:
+        src = batch['source_input_ids'].to(device)
+        print(src)
+        tgt = batch['target_input_ids'].to(device)
+        src_mask = batch['source_mask'].to(device)
+        tgt_mask = batch['target_mask'].to(device)
+
+        # Transpose masks to match the expected shape [seq_length, batch_size]
+        src_mask = src_mask.t()
+        tgt_mask = tgt_mask.t()
+
+        optimizer.zero_grad()
+        
+        output = model(src, tgt, src_key_padding_mask=src_mask, tgt_key_padding_mask=tgt_mask)
+        # print(output)
+        output = output.reshape(-1, output.shape[-1])  # Flatten output for loss calculation
+        tgt = tgt.reshape(-1)  # Flatten target for loss calculation
+
+        loss = loss_fn(output, tgt)
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+        print (total_loss)
+
+    average_loss = total_loss / len(dataloader)
+    print(f"Average Loss: {average_loss}")
 
     # Assuming the use of a CUDA device if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
