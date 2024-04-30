@@ -15,6 +15,7 @@ class ModelConfig:
 class TrainingConfig:
     batch_size: int = 4
     context_window: int = 512
+    learning_rate: float = 0.0001
     source_column: str = 'English words/sentences' 
     target_column: str = 'French words/sentences'
     csv_file: str = 'data/eng_french.csv'

@@ -28,18 +28,23 @@ def main():
 
     # Model instantiation
     model = Model(model_config)
+    # print(model)
+    print("Model created successfully")
 
-    # # Loss and Optimizer
-    # loss_fn = nn.CrossEntropyLoss()
-    # optimizer = optim.Adam(model.parameters(), lr=training_config.learning_rate)
+    # Loss and Optimizer
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=training_config.learning_rate)
+    print('Loss and Optimizer created successfully')
 
-    # # Assuming the use of a CUDA device if available
+    # Assuming the use of a CUDA device if available
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # model = model.to(device)
+    device = torch.device("cpu")
+    model = model.to(device)
+    print(f'Model moved to {device}')
   
-    # # Running the training loop
-    # train(dataloader, model, loss_fn, optimizer, device)
-    # print("Working and done")
+    # Running the training loop
+    train(dataloader, model, loss_fn, optimizer, device)
+    print("Working and done")
 
 if __name__ == "__main__":
     main()

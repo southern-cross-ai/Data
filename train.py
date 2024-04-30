@@ -5,7 +5,6 @@ def train(dataloader, model, loss_fn, optimizer, device):
 
     for batch in dataloader:
         src = batch['source_input_ids'].to(device)
-        print(src)
         tgt = batch['target_input_ids'].to(device)
         src_mask = batch['source_mask'].to(device)
         tgt_mask = batch['target_mask'].to(device)
@@ -17,7 +16,7 @@ def train(dataloader, model, loss_fn, optimizer, device):
         optimizer.zero_grad()
         
         output = model(src, tgt, src_key_padding_mask=src_mask, tgt_key_padding_mask=tgt_mask)
-        # print(output)
+        print(output)
         output = output.reshape(-1, output.shape[-1])  # Flatten output for loss calculation
         tgt = tgt.reshape(-1)  # Flatten target for loss calculation
 
