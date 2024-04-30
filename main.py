@@ -23,8 +23,8 @@ def main():
     # # Data Preparation
     dataset = TranslationDataset(training_config.csv_file, training_config.source_column, training_config.target_column, tokenizer, training_config.context_window)
     dataloader = DataLoader(dataset, batch_size=training_config.batch_size, shuffle=True)
-    # data = next(iter(dataloader))
-    # print(len(data))
+    data = next(iter(dataloader))
+    print(data['source_input_ids'].shape)
 
     # # Model instantiation
     # model = Model(model_config)
