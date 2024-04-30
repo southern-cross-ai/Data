@@ -26,20 +26,20 @@ def main():
     data = next(iter(dataloader))
     print(data['source_input_ids'].shape)
 
-    # # Model instantiation
-    # model = Model(model_config)
+    # Model instantiation
+    model = Model(model_config)
 
     # # Loss and Optimizer
     # loss_fn = nn.CrossEntropyLoss()
     # optimizer = optim.Adam(model.parameters(), lr=training_config.learning_rate)
 
     # # Assuming the use of a CUDA device if available
-    # device = torch.device("cuda" if torch.cuda.is available() else "cpu")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # model = model.to(device)
   
     # # Running the training loop
     # train(dataloader, model, loss_fn, optimizer, device)
-    print("Working and done")
+    # print("Working and done")
 
 if __name__ == "__main__":
     main()

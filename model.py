@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import math
+from config import ModelConfig
 
 class PositionalEncoding(nn.Module):
     def __init__(self, embedding_size, dropout=0.1, context_window=512):
@@ -21,27 +22,20 @@ class PositionalEncoding(nn.Module):
 
 
 class Model(nn.Module):
-    def __init__(self, 
-                 vocab_size, 
-                 embedding_size, 
-                 nhead, 
-                 num_encoder_layers, 
-                 num_decoder_layers, 
-                 dim_feedforward, 
-                 context_window, 
-                 dropout=0.1
-                 ):
+    def __init__(self, config: ModelConfig):
         super(Model, self).__init__()
-        self.embedding_size = embedding_size
-        self.embedding = nn.Embedding(vocab_size, embedding_size)
-        self.pos_encoder = PositionalEncoding(embedding_size, dropout, context_window)
-        self.transformer = nn.Transformer(embedding_size, 
-                                          nhead, 
-                                          num_encoder_layers, 
-                                          num_decoder_layers, 
-                                          dim_feedforward, 
-                                          dropout)
-        self.out = nn.Linear(embedding_size, vocab_size)
+        self.embedding_size = config.embedding_size
+        self.embedding = nn.Embedding(config.vocab_size, config.embedding_size)
+        self.pos_encoder = PositionalEncoding(config.embedding_size, config.dropout, config.context_window)
+        self.transformer = nn.Transformer(
+            config.embedding_size, 
+            config.nhead, 
+            config.num_encoder_layers, 
+            config.num_decoder_layers, 
+            config.dim_feedforward, 
+            config.dropout
+        )
+        self.out = nn.Linear(config.embedding_size, config.vocab_size)
 
     def forward(self, src, tgt, src_key_padding_mask, tgt_key_padding_mask, memory_key_padding_mask=None):
         src = self.embedding(src) * math.sqrt(self.embedding_size)

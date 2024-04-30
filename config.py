@@ -8,11 +8,12 @@ class ModelConfig:
     num_decoder_layers: int = 6
     dim_feedforward: int = 2048
     dropout: float = 0.1
+    context_window: int = 512
     vocab_size: int = None  # Initially set to None
 
 @dataclass
 class TrainingConfig:
-    batch_size: int = 1
+    batch_size: int = 4
     context_window: int = 512
     source_column: str = 'English words/sentences' 
     target_column: str = 'French words/sentences'
