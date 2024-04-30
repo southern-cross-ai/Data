@@ -1,3 +1,6 @@
+def fit():
+    pass
+
 def train(dataloader, model, loss_fn, optimizer, device):
     print('Training...')
     model.train()

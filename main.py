@@ -7,7 +7,7 @@ from transformers import XLMRobertaTokenizer
 # Importing custom modules
 from model import Model
 from dataset import TranslationDataset
-from train import train
+from training_loop import fit
 from config import TrainingConfig, ModelConfig
 
 def main():
@@ -43,7 +43,7 @@ def main():
     print(f'Model moved to {device}')
   
     # Running the training loop
-    train(dataloader, model, loss_fn, optimizer, device)
+    fit(dataloader, model, loss_fn, optimizer, device)
     print("Working and done")
 
 if __name__ == "__main__":
