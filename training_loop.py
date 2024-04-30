@@ -1,3 +1,5 @@
+# https://towardsdatascience.com/a-detailed-guide-to-pytorchs-nn-transformer-module-c80afbc9ffb1
+
 def fit():
     pass
 
