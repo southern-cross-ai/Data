@@ -14,15 +14,17 @@ def main():
     # Tokenization
     tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base')
     vocab_size = tokenizer.vocab_size
-    print(vocab_size)
+    # print(vocab_size)
 
     # # Configuration instances
     model_config = ModelConfig(vocab_size=vocab_size)
     training_config = TrainingConfig()
 
     # # Data Preparation
-    # dataset = TranslationDataset(training_config.csv_file, tokenizer, training_config.context_window)
-    # dataloader = DataLoader(dataset, batch_size=training_config.batch_size, shuffle=True)
+    dataset = TranslationDataset(training_config.csv_file, training_config.source_column, training_config.target_column, tokenizer, training_config.context_window)
+    dataloader = DataLoader(dataset, batch_size=training_config.batch_size, shuffle=True)
+    # data = next(iter(dataloader))
+    # print(len(data))
 
     # # Model instantiation
     # model = Model(model_config)
