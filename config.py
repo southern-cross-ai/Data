@@ -12,9 +12,11 @@ class ModelConfig:
 
 @dataclass
 class TrainingConfig:
-    batch_size: int = 128
+    batch_size: int = 1
     context_window: int = 512
-    csv_columns: list = ('English words/sentences', 'French words/sentences')
+    source_column: str = 'English words/sentences' 
+    target_column: str = 'French words/sentences'
+    csv_file: str = 'data/eng_french.csv'
 
 ############# Example of file usage
 # model_config = ModelConfig()  # Uses default values defined in the dataclass
